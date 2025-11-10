@@ -1,12 +1,23 @@
 module.exports = {
     app: {
-        token: 'xxx',
-        playing: 'by Zerio ❤️',
+        token: process.env.DISCORD_TOKEN || 'xxx',
+        playing: 'by the Community ❤️',
         global: true,
-        guild: 'xxx',
-        ExtraMessages: false,
+        guild: process.env.GUILD_ID || 'xxx',
+        extraMessages: false,
         loopMessage: false,
+        lang: 'en',
+        enableEmojis: false,
+    },
 
+    emojis:{
+        'back': '⏪',
+        'skip': '⏩',
+        'ResumePause': '⏯️',
+        'savetrack': '💾',
+        'volumeUp': '🔊',
+        'volumeDown': '🔉',
+        'loop': '🔁',
     },
 
     opt: {
@@ -15,6 +26,7 @@ module.exports = {
             roleName: '',
             commands: []
         },
+        Translate_Timeout: 10000,
         maxVol: 100,
         spotifyBridge: true,
         volume: 75,
