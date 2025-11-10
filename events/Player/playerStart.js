@@ -1,37 +1,58 @@
-const { ActionRowBuilder, ButtonBuilder, EmbedBuilder } = require('discord.js');
-module.exports = (queue, track) => {
+const { ActionRowBuilder, ButtonBuilder, EmbedBuilder } = require("discord.js");
+const { Translate } = require("../../process_tools");
 
-    if (!client.config.app.loopMessage && queue.repeatMode !== 0) return;
+module.exports = (queue, track) => {
+  if (!client.config.app.loopMessage && queue.repeatMode !== 0) return;
+
+  let EmojiState = client.config.app.enableEmojis;
+
+  const emojis = client.config.emojis;
+
+  emojis ? EmojiState = EmojiState : EmojiState = false;
+
+
+  (async () => {
     const embed = new EmbedBuilder()
-    .setAuthor({name: `Started playing ${track.title} in ${queue.channel.name} 🎧`, iconURL: track.thumbnail})
-    .setColor('#2f3136')
+      .setAuthor({
+        name: await Translate(
+          `Started playing <${track.title}> in <${queue.channel.name}> <🎧>`
+        ),
+        iconURL: track.thumbnail,
+      })
+      .setColor("#2f3136");
 
     const back = new ButtonBuilder()
-    .setLabel('Back')
-    .setCustomId(JSON.stringify({ffb: 'back'}))
-    .setStyle('Primary')
+      .setLabel(EmojiState ? emojis.back : ('Back'))
+      .setCustomId('back')
+      .setStyle('Primary');
 
     const skip = new ButtonBuilder()
-    .setLabel('Skip')
-    .setCustomId(JSON.stringify({ffb: 'skip'}))
-    .setStyle('Primary')
+      .setLabel(EmojiState ? emojis.skip : ('Skip'))
+      .setCustomId('skip')
+      .setStyle('Primary');
 
     const resumepause = new ButtonBuilder()
-    .setLabel('Resume & Pause')
-    .setCustomId(JSON.stringify({ffb: 'resume&pause'}))
-    .setStyle('Danger')
+      .setLabel(EmojiState ? emojis.ResumePause : ('Resume & Pause'))
+      .setCustomId('resume&pause')
+      .setStyle('Danger');
 
     const loop = new ButtonBuilder()
-    .setLabel('Loop')
-    .setCustomId(JSON.stringify({ffb: 'loop'}))
-    .setStyle('Secondary')
-    
+      .setLabel(EmojiState ? emojis.loop : ('Loop'))
+      .setCustomId('loop')
+      .setStyle('Danger');
+
     const lyrics = new ButtonBuilder()
-    .setLabel('lyrics')
-    .setCustomId(JSON.stringify({ffb: 'lyrics'}))
-    .setStyle('Secondary')
+      .setLabel(await Translate("Lyrics"))
+      .setCustomId("lyrics")
+      .setStyle("Secondary");
 
-    const row1 = new ActionRowBuilder().addComponents(back, loop, resumepause, lyrics, skip)
-    queue.metadata.send({ embeds: [embed], components: [row1] })
-
-}
+    const row1 = new ActionRowBuilder().addComponents(
+      back,
+      loop,
+      resumepause,
+      skip,
+      lyrics
+    );
+    queue.metadata.channel.send({ embeds: [embed], components: [row1] });
+  })();
+};
